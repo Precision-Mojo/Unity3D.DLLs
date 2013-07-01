@@ -1,0 +1,42 @@
+﻿# .gitattributes for Visual Studio and Windows development.
+# Based on https://github.com/Danimoth/gitattributes (see CSharp.gitattributes)
+
+# Normalize line endings of text files.
+* text=auto
+
+# Ships with msysgit.
+*.doc diff=astextplain
+*.DOC diff=astextplain
+*.docx diff=astextplain
+*.DOCX diff=astextplain
+*.dot diff=astextplain
+*.DOT diff=astextplain
+*.pdf diff=astextplain
+*.PDF diff=astextplain
+*.rtf diff=astextplain
+*.RTF diff=astextplain
+
+# Files that are always binary.
+*.jpg binary
+*.png binary
+*.gif binary
+*.exe binary
+*.zip binary
+*.pdf binary
+
+# Use language-specific diff for C# source.
+*.cs diff=csharp
+
+# Visual Studio project files.
+*.proj      merge=union
+*.csproj    merge=union
+*.vbproj    merge=union
+*.fsproj    merge=union
+*.dbproj    merge=union
+*.booproj   merge=union
+*.unityproj merge=union
+*.sln       merge=union
+
+# .cmd and .bat files must use CRLF termination to run properly.
+*.cmd eol=crlf
+*.bat eol=crlf

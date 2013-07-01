@@ -1,0 +1,17 @@
+﻿# .gitignore for a Visual Studio project.
+
+# Build output
+bin/
+obj/
+
+# Visual Studio preferences and tool data.
+*.suo
+*.user
+*.userprefs
+*.usertasks
+*.cache
+*.Cache
+
+# Addin / extension data.
+_ReSharper.*
+*.wwdb
