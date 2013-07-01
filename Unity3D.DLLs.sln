@@ -1,6 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{1844F241-9783-47FA-93ED-D57BC5ABAC3E}"
+	ProjectSection(SolutionItems) = preProject
+		nuget\Unity3D.DLLs.nuspec = nuget\Unity3D.DLLs.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
