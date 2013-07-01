@@ -1,8 +1,11 @@
 ﻿# .gitignore for a Visual Studio project.
 
-# Build output
+# Build output.
 bin/
 obj/
+
+# Installed NuGet packages.
+packages/
 
 # Visual Studio preferences and tool data.
 *.suo
