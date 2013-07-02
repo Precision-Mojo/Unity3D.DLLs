@@ -18,8 +18,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{3BF2E688-1F1F-43D1-ABC9-D0864EFE9411}"
+	ProjectSection(SolutionItems) = preProject
+		NuGet\tools\install.ps1 = NuGet\tools\install.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3BF2E688-1F1F-43D1-ABC9-D0864EFE9411} = {745866C2-4B3E-44AD-B9FE-C428C1F0E140}
 	EndGlobalSection
 EndGlobal
