@@ -7,6 +7,9 @@ obj/
 # Installed NuGet packages.
 packages/
 
+# Unity3D.DLLs NuGet package.
+Unity3D.DLLs.*.nupkg
+
 # Visual Studio preferences and tool data.
 *.suo
 *.user
