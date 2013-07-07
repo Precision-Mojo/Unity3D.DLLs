@@ -5,3 +5,6 @@ param($installPath, $toolsPath, $package, $project)
 $project.ProjectItems | ForEach { if ($_.Name -eq "8CFAF032-C5F2-49A3-B8F6-07EF68F4623D.txt") { $_.Remove() } }
 $projectPath = Split-Path $project.FullName -Parent
 Join-Path $projectPath "8CFAF032-C5F2-49A3-B8F6-07EF68F4623D.txt" | Remove-Item
+
+# Update Unity 3D assembly references.
+Update-Unity3DAssemblyReferences $project

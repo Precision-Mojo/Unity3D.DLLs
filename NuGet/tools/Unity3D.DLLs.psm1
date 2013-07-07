@@ -1,4 +1,26 @@
-$InstalledUnity3DEditorPath = ""
+function Update-Unity3DAssemblyReferences
+{
+	param (
+		[parameter(Mandatory=$true)]
+		$project
+	)
+	
+	$Unity3DManagedDllNames = GetUnity3DManagedDllNames
+
+	if (($Unity3DManagedDllNames -isnot [array]) -or ($Unity3DManagedDllNames.Length -eq 0))
+	{
+		Write-Warning "Couldn't get a list of Unity 3D managed DLLs."
+		return
+	}
+
+	foreach ($reference in $project.Object.References)
+	{
+		if (($reference.Type -eq 0) -and ($Unity3DManagedDllNames -contains $reference.Name))
+		{
+			Write-Host $reference.Name "(" $reference.Path ") = " $reference.Type
+		}
+	}
+}
 
 function Get-Unity3DEditorPath
 {
@@ -8,15 +30,32 @@ function Get-Unity3DEditorPath
 	{
 	    if (Test-Path $InstalledUnity.DisplayIcon)
 	    {
-	        $InstalledUnity3DEditorPath = Split-Path $InstalledUnity.DisplayIcon
+	        Split-Path $InstalledUnity.DisplayIcon
 	    }
 	    else
 	    {
-	        $InstalledUnity3DEditorPath = Split-Path $InstalledUnity.UninstallString
+	        Split-Path $InstalledUnity.UninstallString
 	    }
 	}
+}
 
-	$InstalledUnity3DEditorPath
+function GetUnity3DManagedDllNames
+{
+	GetUnity3DManagedDlls | Split-Path -Leaf | % {[System.IO.Path]::GetFileNameWithoutExtension($_) }
+}
+
+function GetUnity3DManagedDlls
+{
+	$InstalledUnity3DEditorPath = Get-Unity3DEditorPath
+	$Unity3DManagedPath = Join-Path $InstalledUnity3DEditorPath "Data\Managed"
+
+	if (!(Test-Path $Unity3DManagedPath))
+	{
+		Write-Warning "Couldn't locate the path to installed Unity 3D managed DLLs."
+		return @()
+	}
+
+	Get-ChildItem (Join-Path $Unity3DManagedPath "*") -Include "Unity*.dll" | % { Join-Path $Unity3DManagedPath $_.Name }
 }
 
 function GetInstalledSoftware32([parameter(Mandatory=$true)]$displayName)
@@ -33,4 +72,4 @@ function GetInstalledSoftware32([parameter(Mandatory=$true)]$displayName)
 	$UninstallKeys | Get-ItemProperty | Where-Object -Property DisplayName -EQ $displayName
 }
 
-Export-ModuleMember @('Get-Unity3DEditorPath') -Variable 'InstalledUnity3DEditorPath'
+Export-ModuleMember @('Get-Unity3DEditorPath', 'Update-Unity3DAssemblyReferences')
