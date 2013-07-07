@@ -28,6 +28,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{3BF2E688
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginTest", "PluginTest\PluginTest.csproj", "{6B07BC1A-EB24-49AC-A449-85A128228D40}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "content", "content", "{765687B9-ED12-4117-93AC-546D256213BF}"
+	ProjectSection(SolutionItems) = preProject
+		NuGet\content\8CFAF032-C5F2-49A3-B8F6-07EF68F4623D.txt = NuGet\content\8CFAF032-C5F2-49A3-B8F6-07EF68F4623D.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +49,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3BF2E688-1F1F-43D1-ABC9-D0864EFE9411} = {745866C2-4B3E-44AD-B9FE-C428C1F0E140}
+		{765687B9-ED12-4117-93AC-546D256213BF} = {745866C2-4B3E-44AD-B9FE-C428C1F0E140}
 	EndGlobalSection
 EndGlobal
