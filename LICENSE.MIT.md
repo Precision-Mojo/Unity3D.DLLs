@@ -1,7 +1,6 @@
 # The MIT License
 
-> Copyright (c) 2013 Precision Mojo, LLC.
-> Copyright (c) 2013 [Contributors](CONTRIBUTORS.md).
+Copyright (c) 2013 Precision Mojo, LLC and [Contributors](CONTRIBUTORS.md).
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
