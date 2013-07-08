@@ -10,7 +10,7 @@ Several functions are copied from scripts found in David Fowler's NuGetPowerTool
 NuGetPowerTools is licensed under the Apache License 2.0 (https://nuget.codeplex.com/license).
 #>
 
-function Get-ProjectFromName
+function Get-Projects
 {
 	param
 	(
@@ -24,7 +24,7 @@ function Get-ProjectFromName
 	}
 	else
 	{
-		$projects = Get-Project
+		$projects = Get-Project -All
 	}
 
 	$projects
@@ -41,7 +41,7 @@ function Get-MSBuildProject
 
 	process
 	{
-		(Get-ProjectFromName $ProjectName) | % {
+		(Get-Projects $ProjectName) | % {
 			if ($SpecifyUserProject)
 			{
 				$path = $_.FullName + ".user"
