@@ -12,14 +12,15 @@ NuGetPowerTools is licensed under the Apache License 2.0 (https://nuget.codeplex
 
 function Get-ProjectFromName
 {
-	param (
+	param
+	(
 		[Parameter(ValueFromPipelineByPropertyName=$true)]
-		[String[]]$projectName
+		[String[]] $ProjectName
 	)
 
-	if ($projectName)
+	if ($ProjectName)
 	{
-		$projects = Get-Project $projectName
+		$projects = Get-Project $ProjectName
 	}
 	else
 	{
@@ -31,15 +32,25 @@ function Get-ProjectFromName
 
 function Get-MSBuildProject
 {
-	param (
+	param
+	(
 		[Parameter(ValueFromPipelineByPropertyName=$true)]
-		[String[]]$projectName
+		[String[]] $ProjectName,
+		[switch] $SpecifyUserProject
 	)
 
 	process
 	{
-		(Get-ProjectFromName $projectName) | % {
-			$path = $_.FullName
+		(Get-ProjectFromName $ProjectName) | % {
+			if ($SpecifyUserProject)
+			{
+				$path = $_.FullName + ".user"
+			}
+			else
+			{
+				$path = $_.FullName
+			}
+
 			@([Microsoft.Build.Evaluation.ProjectCollection]::GlobalProjectCollection.GetLoadedProjects($path))[0]
 		}
 	}
