@@ -1,4 +1,4 @@
-function Update-Unity3DAssemblyReferences
+function Update-Unity3DReferences
 {
 	param (
 		[parameter(Mandatory=$true)]
@@ -72,4 +72,4 @@ function GetInstalledSoftware32([parameter(Mandatory=$true)]$displayName)
 	$UninstallKeys | Get-ItemProperty | Where-Object -Property DisplayName -EQ $displayName
 }
 
-Export-ModuleMember @('Get-Unity3DEditorPath', 'Update-Unity3DAssemblyReferences')
+Export-ModuleMember Get-Unity3DEditorPath, Update-Unity3DReferences
