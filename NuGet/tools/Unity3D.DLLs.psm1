@@ -1,23 +1,37 @@
 function Update-Unity3DReferences
 {
-	param (
-		[parameter(Mandatory=$true)]
-		$project
+	param
+	(
+		[Parameter(ValueFromPipelineByPropertyName=$true)]
+		[String[]] $ProjectName
 	)
-	
-	$Unity3DManagedDllNames = GetUnity3DManagedDllNames
 
-	if (($Unity3DManagedDllNames -isnot [array]) -or ($Unity3DManagedDllNames.Length -eq 0))
+	begin
 	{
-		Write-Warning "Couldn't get a list of Unity 3D managed DLLs."
-		return
+		$Unity3DManagedDllNames = GetUnity3DManagedDllNames
+
+		if (($Unity3DManagedDllNames -isnot [array]) -or ($Unity3DManagedDllNames.Length -eq 0))
+		{
+			Write-Warning "Couldn't get a list of Unity 3D managed DLLs."
+			return
+		}
 	}
 
-	foreach ($reference in $project.Object.References)
+	process
 	{
-		if (($reference.Type -eq 0) -and ($Unity3DManagedDllNames -contains $reference.Name))
-		{
-			Write-Host $reference.Name "(" $reference.Path ") = " $reference.Type
+		(Get-Projects $ProjectName) | % {
+			$buildProject = $_ | Get-MSBuildProject
+
+			foreach ($itemGroup in $buildProject.Xml.ItemGroups)
+			{
+				foreach ($item in $itemGroup.Items)
+				{
+					if (($item.ItemType -eq "Reference") -and ($Unity3DManagedDllNames -contains $item.Include))
+					{
+						Write-Host $item.Include "(" ($item.Metadata | % { $_.Name + "=" + $_.Value }) ")"
+					}
+				}
+			}
 		}
 	}
 }

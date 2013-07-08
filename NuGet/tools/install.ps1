@@ -7,4 +7,4 @@ $projectPath = Split-Path $project.FullName -Parent
 Join-Path $projectPath "8CFAF032-C5F2-49A3-B8F6-07EF68F4623D.txt" | Remove-Item
 
 # Update Unity 3D references.
-Update-Unity3DReferences $project
+$project | Update-Unity3DReferences
