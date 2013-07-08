@@ -1,9 +1,18 @@
+<#
+Unity3D.DLLs.psm1 - PowerShell module for using Unity3D.DLLs from the NuGet Package Manager Console.
+
+Copyright (c) 2013 Precision Mojo, LLC.
+
+This file is part of the Unity3D.DLLs project (< URL >) which is distributed under the MIT License.
+Refer to the LICENSE.MIT.md document located in the project directory for licensing terms.
+#>
+
 $Unity3DProjectPropertyNames = @(
 	"Unity3DUseReferencePath"
 )
 
 $DefaultUnity3DProjectProperties = @{
-	Unity3DUseReferencePath = "true";
+	Unity3DUseReferencePath = $true;
 }
 
 function Update-Unity3DReferences
@@ -37,7 +46,7 @@ function Update-Unity3DReferences
 				{
 					if (($item.ItemType -eq "Reference") -and ($Unity3DManagedDllNames -contains $item.Include))
 					{
-						Write-Host $item.Include "(" ($item.Metadata | % { $_.Name + "=" + $_.Value }) ")"
+						Write-Host $item.Include "(" ($item.Metadata | % { $_.Name + '="' + $_.Value + '",' }) ")"
 					}
 				}
 			}
@@ -90,20 +99,35 @@ function GetUnity3DProjectProperties
 	)
 
 	$projectProperties = $DefaultUnity3DProjectProperties
-	$userBuildProject = Get-MSBuildProject $ProjectName -SpecifyUserProject
+	$buildProject = Get-MSBuildProject $ProjectName
 
-	foreach ($propertyGroup in $userBuildProject.PropertyGroups)
+	foreach ($name in $Unity3DProjectPropertyNames)
 	{
-		foreach ($property in $propertyGroup.Properties)
+		$property = Get-MSBuildProperty $name $ProjectName
+
+		if ($property)
 		{
-			if ($Unity3DProjectPropertyNames -contains $property.Name)
-			{
-				$projectProperties[$property.Name] = $property.Value
-			}
+			$projectProperties[$name] = NormalizePropertyValue($property.EvaluatedValue)
 		}
 	}
 
 	$projectProperties
+}
+
+function NormalizePropertyValue([string] $value)
+{
+	$value = $value.Trim()
+
+	if ($value -ieq "true")
+	{
+		return $true
+	}
+	elseif (($value.Length -eq 0) -or ($value -ieq "false"))
+	{
+		return $false
+	}
+
+	$value
 }
 
 function GetInstalledSoftware32([parameter(Mandatory=$true)]$displayName)

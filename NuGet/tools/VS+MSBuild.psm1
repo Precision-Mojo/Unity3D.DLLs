@@ -55,3 +55,17 @@ function Get-MSBuildProject
 		}
 	}
 }
+
+function Get-MSBuildProperty
+{
+	param
+	(
+		[Parameter(Position=0, Mandatory=$true)]
+		$Name,
+		[Parameter(Position=1, ValueFromPipelineByPropertyName=$true)]
+		[String[]] $ProjectName
+	)
+
+	$buildProject = Get-MSBuildProject $ProjectName
+	$buildProject.GetProperty($Name)
+}
