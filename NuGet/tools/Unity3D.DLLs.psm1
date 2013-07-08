@@ -1,3 +1,11 @@
+$Unity3DProjectPropertyNames = @(
+	"Unity3DUseReferencePath"
+)
+
+$DefaultUnity3DProjectProperties = @{
+	Unity3DUseReferencePath = "true";
+}
+
 function Update-Unity3DReferences
 {
 	param
@@ -21,6 +29,7 @@ function Update-Unity3DReferences
 	{
 		(Get-Projects $ProjectName) | % {
 			$buildProject = $_ | Get-MSBuildProject
+			$projectProperties = $_ | GetUnity3DProjectProperties
 
 			foreach ($itemGroup in $buildProject.Xml.ItemGroups)
 			{
@@ -70,6 +79,31 @@ function GetUnity3DManagedDlls
 	}
 
 	Get-ChildItem (Join-Path $Unity3DManagedPath "*") -Include "Unity*.dll" | % { Join-Path $Unity3DManagedPath $_.Name }
+}
+
+function GetUnity3DProjectProperties
+{
+	param
+	(
+		[Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[String] $ProjectName
+	)
+
+	$projectProperties = $DefaultUnity3DProjectProperties
+	$userBuildProject = Get-MSBuildProject $ProjectName -SpecifyUserProject
+
+	foreach ($propertyGroup in $userBuildProject.PropertyGroups)
+	{
+		foreach ($property in $propertyGroup.Properties)
+		{
+			if ($Unity3DProjectPropertyNames -contains $property.Name)
+			{
+				$projectProperties[$property.Name] = $property.Value
+			}
+		}
+	}
+
+	$projectProperties
 }
 
 function GetInstalledSoftware32([parameter(Mandatory=$true)]$displayName)
