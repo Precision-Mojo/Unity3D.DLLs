@@ -69,3 +69,50 @@ function Get-MSBuildProperty
 	$buildProject = Get-MSBuildProject $ProjectName
 	$buildProject.GetProperty($Name)
 }
+
+function Set-MSBuildProperty
+{
+	param
+	(
+		[Parameter(Position=0, Mandatory=$true)]
+		[string] $PropertyName,
+		[Parameter(Position=1, Mandatory=$true)]
+		[string] $PropertyValue,
+		[Parameter(Position=2, ValueFromPipelineByPropertyName=$true)]
+		[String[]] $ProjectName,
+		[switch] $SpecifyUserProject
+	)
+
+	process
+	{
+		(Get-Projects $ProjectName) | % {
+			$buildProject = $_ | Get-MSBuildProject -SpecifyUserProject:$SpecifyUserProject
+			$buildProject.SetProperty($PropertyName, $PropertyValue) | Out-Null
+			$_.Save()
+		}
+	}
+}
+
+function Set-MSBuildItemMetadata
+{
+	param
+	(
+		[Parameter(Position=0, Mandatory=$true)]
+		[string] $MetadataName,
+		[Parameter(Position=1, Mandatory=$true)]
+		[string] $MetadataValue,
+		[Parameter(Position=2, Mandatory=$true)]
+		$ProjectItemElement
+	)
+
+	$metadata = $ProjectItemElement.Metadata | ? { $_.Name -eq $MetadataName }
+
+	if ($metadata)
+	{
+		$metadata.Value = $MetadataValue
+	}
+	else
+	{
+		$ProjectItemElement.AddMetadata($MetadataName, $MetadataValue)
+	}
+}
