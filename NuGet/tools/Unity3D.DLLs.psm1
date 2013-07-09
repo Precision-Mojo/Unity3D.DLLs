@@ -51,7 +51,7 @@ function Update-Unity3DReferences
 
 						if ($projectProperties.Unity3DUseReferencePath)
 						{
-							$_ | Set-MSBuildProperty "ReferencePath" (Split-Path $managedDll) -SpecifyUserProject
+							$_ | Join-ReferencePath (Split-Path $managedDll)
 						}
 						else
 						{
@@ -86,6 +86,38 @@ function Get-Unity3DEditorPath
 	        Split-Path $InstalledUnity.UninstallString
 	    }
 	}
+}
+
+function Join-ReferencePath
+{
+	param
+	(
+		[Parameter(Mandatory=$true)]
+		[String] $Path,
+		[Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[String] $ProjectName
+	)
+
+	# Ensure a trailing slash.
+	$Path = $Path.TrimEnd("\") + "\"
+	$pathProperty = Get-MSBuildProperty "ReferencePath" $ProjectName
+
+	if ($pathProperty)
+	{
+		# Ensure the added reference path is the first in the list.
+		$origReferencePath = $pathProperty.UnevaluatedValue
+
+		if (!$origReferencePath.StartsWith($Path))
+		{
+			$Path = $Path + ";" + $origReferencePath.Replace($Path, "").TrimEnd(";")
+		}
+		else
+		{
+			$Path = $origReferencePath
+		}
+	}
+
+	Set-MSBuildProperty "ReferencePath" $Path $ProjectName -SpecifyUserProject
 }
 
 function GetUnity3DManagedDlls
