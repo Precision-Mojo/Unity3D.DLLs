@@ -25,9 +25,9 @@ function Update-Unity3DReferences
 
 	begin
 	{
-		$Unity3DManagedDllNames = GetUnity3DManagedDllNames
+		$unity3DManagedDlls = GetUnity3DManagedDlls
 
-		if (($Unity3DManagedDllNames -isnot [array]) -or ($Unity3DManagedDllNames.Length -eq 0))
+		if ($unity3DManagedDlls.Length -eq 0)
 		{
 			Write-Warning "Couldn't get a list of Unity 3D managed DLLs."
 			return
@@ -37,18 +37,35 @@ function Update-Unity3DReferences
 	process
 	{
 		(Get-Projects $ProjectName) | % {
-			$buildProject = $_ | Get-MSBuildProject
 			$projectProperties = $_ | GetUnity3DProjectProperties
+			$modified = $false
+			$buildProject = $_ | Get-MSBuildProject
 
 			foreach ($itemGroup in $buildProject.Xml.ItemGroups)
 			{
 				foreach ($item in $itemGroup.Items)
 				{
-					if (($item.ItemType -eq "Reference") -and ($Unity3DManagedDllNames -contains $item.Include))
+					if (($item.ItemType -eq "Reference") -and $unity3DManagedDlls.ContainsKey($item.Include))
 					{
-						Write-Host $item.Include "(" ($item.Metadata | % { $_.Name + '="' + $_.Value + '",' }) ")"
+						$managedDll = $unity3DManagedDlls[$item.Include]
+
+						if ($projectProperties.Unity3DUseReferencePath)
+						{
+							$_ | Set-MSBuildProperty "ReferencePath" (Split-Path $managedDll) -SpecifyUserProject
+						}
+						else
+						{
+							Set-MSBuildItemMetadata "HintPath" $managedDll $item
+						}
+
+						$modified = $true
 					}
 				}
+			}
+
+			if ($modified)
+			{
+				$_.Save()
 			}
 		}
 	}
@@ -71,15 +88,9 @@ function Get-Unity3DEditorPath
 	}
 }
 
-function GetUnity3DManagedDllNames
-{
-	GetUnity3DManagedDlls | Split-Path -Leaf | % {[System.IO.Path]::GetFileNameWithoutExtension($_) }
-}
-
 function GetUnity3DManagedDlls
 {
-	$InstalledUnity3DEditorPath = Get-Unity3DEditorPath
-	$Unity3DManagedPath = Join-Path $InstalledUnity3DEditorPath "Data\Managed"
+	$Unity3DManagedPath = GetUnity3DManagedPath
 
 	if (!(Test-Path $Unity3DManagedPath))
 	{
@@ -87,7 +98,21 @@ function GetUnity3DManagedDlls
 		return @()
 	}
 
-	Get-ChildItem (Join-Path $Unity3DManagedPath "*") -Include "Unity*.dll" | % { Join-Path $Unity3DManagedPath $_.Name }
+	$managedDlls = Get-ChildItem (Join-Path $Unity3DManagedPath "*") -Include "Unity*.dll" | % { Join-Path $Unity3DManagedPath $_.Name }
+	$unity3dManagedDlls = @{}
+
+	foreach ($dll in $managedDlls)
+	{
+		$name = $dll | Split-Path -Leaf | % {[System.IO.Path]::GetFileNameWithoutExtension($_) }
+		$unity3dManagedDlls[$name] = $dll
+	}
+
+	$unity3dManagedDlls
+}
+
+function GetUnity3DManagedPath
+{
+	Join-Path (Get-Unity3DEditorPath) "Data\Managed"
 }
 
 function GetUnity3DProjectProperties
@@ -99,7 +124,6 @@ function GetUnity3DProjectProperties
 	)
 
 	$projectProperties = $DefaultUnity3DProjectProperties
-	$buildProject = Get-MSBuildProject $ProjectName
 
 	foreach ($name in $Unity3DProjectPropertyNames)
 	{
