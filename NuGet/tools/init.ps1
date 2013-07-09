@@ -12,3 +12,13 @@ if (Get-Module | ? { $_.Name -eq "Unity3D.DLLs" })
 }
 
 Import-Module (Join-Path $toolsPath Unity3D.DLLs.psd1)
+
+# Update the Unity 3D references on all projects that don't have Unity3DSkipAutoUpdate set to true.
+Get-Project -All | % {
+	$projectProperties = $_ | Get-Unity3DProjectProperties
+
+	if (!$projectProperties.Unity3DSkipAutoUpdate)
+	{
+		$_ | Update-Unity3DReferences
+	}
+}
