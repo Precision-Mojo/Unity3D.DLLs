@@ -15,6 +15,20 @@ $DefaultUnity3DProjectProperties = @{
 	Unity3DUseReferencePath = $true;
 }
 
+<#
+.SYNOPSIS
+	Updates assembly references to Unity 3D managed DLLs.
+
+.DESCRIPTION
+	Scans each specified project for references to Unity 3D assemblies. For each Unity 3D assembly reference found,
+	either the HintPath metadata is updated to point to the DLL found in the active Unity 3D installation, or the
+	specified project's ReferencePath MSBuild property is updated with the Unity 3D managed DLL path. The
+	Unity3DUseReferencePath project setting is used to determine whether to update the project's ReferencePath property
+	or the reference item's HintPath metadata.
+
+.PARAMETER ProjectName
+	The name of the project to update. If omitted, all projects in the solution are updated.
+#>
 function Update-Unity3DReferences
 {
 	param
@@ -74,6 +88,14 @@ function Update-Unity3DReferences
 	}
 }
 
+<#
+.SYNOPSIS
+	Returns the path to the Unity 3D editor application.
+
+.DESCRIPTION
+	Searches the list of installed programs for the active intallation of Unity, and returns the path to the
+	directory containing the Unity editor executable.
+#>
 function Get-Unity3DEditorPath
 {
 	$InstalledUnity = GetInstalledSoftware32("Unity")
@@ -91,6 +113,7 @@ function Get-Unity3DEditorPath
 	}
 }
 
+# Joins (prepends) the specified path to the project's ReferencePath MSBuild property.
 function Join-ReferencePath
 {
 	param
@@ -123,6 +146,7 @@ function Join-ReferencePath
 	Set-MSBuildProperty "ReferencePath" $Path $ProjectName -SpecifyUserProject
 }
 
+# Returns a hashtable with the paths of all Unity 3D managed DLLs that start with "Unity".
 function GetUnity3DManagedDlls
 {
 	$Unity3DManagedPath = GetUnity3DManagedPath
@@ -150,6 +174,7 @@ function GetUnity3DManagedPath
 	Join-Path (Get-Unity3DEditorPath) "Data\Managed"
 }
 
+# Returns a hashtable with the Unity3D.DLLs properties collected for the specified project.
 function GetUnity3DProjectProperties
 {
 	param
@@ -173,6 +198,7 @@ function GetUnity3DProjectProperties
 	$projectProperties
 }
 
+# Normalizes property values: converts "true" to $true, "false" or empty strings to $false, and passes everything else.
 function NormalizePropertyValue([string] $value)
 {
 	$value = $value.Trim()
