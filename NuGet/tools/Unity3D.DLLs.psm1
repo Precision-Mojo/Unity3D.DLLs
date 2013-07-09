@@ -41,26 +41,29 @@ function Update-Unity3DReferences
 			$modified = $false
 			$buildProject = $_ | Get-MSBuildProject
 
-			foreach ($itemGroup in $buildProject.Xml.ItemGroups)
+			foreach ($item in $buildProject.GetItems("Reference"))
 			{
-				foreach ($item in $itemGroup.Items)
+				if ($item.IsImported -or !$unity3DManagedDlls.ContainsKey($item.EvaluatedInclude))
 				{
-					if (($item.ItemType -eq "Reference") -and $unity3DManagedDlls.ContainsKey($item.Include))
-					{
-						$managedDll = $unity3DManagedDlls[$item.Include]
-
-						if ($projectProperties.Unity3DUseReferencePath)
-						{
-							$_ | Join-ReferencePath (Split-Path $managedDll)
-						}
-						else
-						{
-							Set-MSBuildItemMetadata "HintPath" $managedDll $item
-						}
-
-						$modified = $true
-					}
+					continue
 				}
+
+				$managedDll = $unity3DManagedDlls[$item.EvaluatedInclude]
+
+				if ($projectProperties.Unity3DUseReferencePath)
+				{
+					$_ | Join-ReferencePath (Split-Path $managedDll)
+
+					# Because we're using the reference path, strip the HintPath metadata.
+					# TODO: Should this be an option?
+					$item.RemoveMetadata("HintPath") | Out-Null
+				}
+				else
+				{
+					Set-MSBuildItemMetadata "HintPath" $managedDll $item
+				}
+
+				$modified = $true
 			}
 
 			if ($modified)
