@@ -92,27 +92,3 @@ function Set-MSBuildProperty
 		}
 	}
 }
-
-function Set-MSBuildItemMetadata
-{
-	param
-	(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string] $MetadataName,
-		[Parameter(Position=1, Mandatory=$true)]
-		[string] $MetadataValue,
-		[Parameter(Position=2, Mandatory=$true)]
-		$ProjectItemElement
-	)
-
-	$metadata = $ProjectItemElement.Metadata | ? { $_.Name -eq $MetadataName }
-
-	if ($metadata)
-	{
-		$metadata.Value = $MetadataValue
-	}
-	else
-	{
-		$ProjectItemElement.AddMetadata($MetadataName, $MetadataValue)
-	}
-}

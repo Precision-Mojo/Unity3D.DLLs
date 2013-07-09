@@ -60,7 +60,7 @@ function Update-Unity3DReferences
 				}
 				else
 				{
-					Set-MSBuildItemMetadata "HintPath" $managedDll $item
+					$item.SetMetadataValue("HintPath", $managedDll)
 				}
 
 				$modified = $true
