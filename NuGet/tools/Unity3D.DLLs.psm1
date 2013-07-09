@@ -229,4 +229,8 @@ function GetInstalledSoftware32([parameter(Mandatory=$true)]$displayName)
 	$UninstallKeys | Get-ItemProperty | Where-Object -Property DisplayName -EQ $displayName
 }
 
+Register-TabExpansion 'Update-Unity3DReferences' @{
+	ProjectName = { Get-Project -All | Select -ExpandProperty Name }
+}
+
 Export-ModuleMember Get-Unity3DEditorPath, Update-Unity3DReferences
