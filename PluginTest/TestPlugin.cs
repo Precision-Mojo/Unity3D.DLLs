@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace PluginTest
 {
-    public class TestPlugin
+    public class TestPlugin : MonoBehaviour
     {
+        private void Start()
+        {
+            Debug.Log("Start called");
+        }
     }
 }
