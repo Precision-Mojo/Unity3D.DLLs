@@ -8,11 +8,13 @@ Refer to the LICENSE.MIT.md document located in the project directory for licens
 #>
 
 $Unity3DProjectPropertyNames = @(
-	"Unity3DUseReferencePath"
+	"Unity3DUseReferencePath",
+	"Unity3DSkipAutoUpdate"
 )
 
 $DefaultUnity3DProjectProperties = @{
 	Unity3DUseReferencePath = $true;
+	Unity3DSkipAutoUpdate = $false;
 }
 
 <#
@@ -51,7 +53,7 @@ function Update-Unity3DReferences
 	process
 	{
 		(Get-Projects $ProjectName) | % {
-			$projectProperties = $_ | GetUnity3DProjectProperties
+			$projectProperties = $_ | Get-Unity3DProjectProperties
 			$modified = $false
 			$buildProject = $_ | Get-MSBuildProject
 
@@ -111,6 +113,40 @@ function Get-Unity3DEditorPath
 	        Split-Path $InstalledUnity.UninstallString
 	    }
 	}
+}
+
+<#
+.SYNOPSIS
+	Returns a hashtable with the Unity3D.DLLs properties collected for the specified project.
+
+.DESCRIPTION
+	Retrieves all project properties used by the Unity3D.DLLs PowerShell commands and returns a hashtable containing
+	the name and value of each property.
+
+.PARAMETER ProjectName
+	The name of the project to retrieve Unity3D.DLLs properties.
+#>
+function Get-Unity3DProjectProperties
+{
+	param
+	(
+		[Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+		[String] $ProjectName
+	)
+
+	$projectProperties = $DefaultUnity3DProjectProperties
+
+	foreach ($name in $Unity3DProjectPropertyNames)
+	{
+		$property = Get-MSBuildProperty $name $ProjectName
+
+		if ($property)
+		{
+			$projectProperties[$name] = NormalizePropertyValue($property.EvaluatedValue)
+		}
+	}
+
+	$projectProperties
 }
 
 # Joins (prepends) the specified path to the project's ReferencePath MSBuild property.
@@ -174,30 +210,6 @@ function GetUnity3DManagedPath
 	Join-Path (Get-Unity3DEditorPath) "Data\Managed"
 }
 
-# Returns a hashtable with the Unity3D.DLLs properties collected for the specified project.
-function GetUnity3DProjectProperties
-{
-	param
-	(
-		[Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
-		[String] $ProjectName
-	)
-
-	$projectProperties = $DefaultUnity3DProjectProperties
-
-	foreach ($name in $Unity3DProjectPropertyNames)
-	{
-		$property = Get-MSBuildProperty $name $ProjectName
-
-		if ($property)
-		{
-			$projectProperties[$name] = NormalizePropertyValue($property.EvaluatedValue)
-		}
-	}
-
-	$projectProperties
-}
-
 # Normalizes property values: converts "true" to $true, "false" or empty strings to $false, and passes everything else.
 function NormalizePropertyValue([string] $value)
 {
@@ -229,8 +241,10 @@ function GetInstalledSoftware32([parameter(Mandatory=$true)]$displayName)
 	$UninstallKeys | Get-ItemProperty | Where-Object -Property DisplayName -EQ $displayName
 }
 
-Register-TabExpansion 'Update-Unity3DReferences' @{
-	ProjectName = { Get-Project -All | Select -ExpandProperty Name }
+'Update-Unity3DReferences', 'Get-Unity3DProjectProperties' | % {
+	Register-TabExpansion $_ @{
+		ProjectName = { Get-Project -All | Select -ExpandProperty Name }
+	}
 }
 
-Export-ModuleMember Get-Unity3DEditorPath, Update-Unity3DReferences
+Export-ModuleMember Get-Unity3DEditorPath, Update-Unity3DReferences, Get-Unity3DProjectProperties
