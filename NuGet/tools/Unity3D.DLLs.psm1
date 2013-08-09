@@ -142,7 +142,7 @@ function Add-Unity3DReference
 			Write-Warning "A reference to `"$AssemblyName`" will be added using the path `"$managedDll`"."
 		}
 	}
-	
+
 	process
 	{
 		(Get-Projects $ProjectName) | % {
@@ -172,6 +172,44 @@ function Add-Unity3DReference
 				$referenceName = $reference.Name
 				Write-Warning "The project `"$ProjectName`" already contains a reference to `"$referenceName`". Skipping."
 			}
+		}
+	}
+}
+
+<#
+.SYNOPSIS
+	Removes a Unity 3D assembly reference from a project.
+
+.DESCRIPTION
+	Removes the specified assembly reference from the specified project(s).
+
+.PARAMETER ReferenceName
+	The name of the assembly reference to remove.
+
+.PARAMETER ProjectName
+	The name of the project where the reference will be removed. If omitted, then the default project selected in the
+	Package Manager Console is used.
+#>
+function Remove-Unity3DReference
+{
+	param
+	(
+        [Parameter(Position=0, Mandatory=$true)]
+        [string] $ReferenceName,
+        [Parameter(Position=1, ValueFromPipelineByPropertyName=$true)]
+        [string[]] $ProjectName
+	)
+
+	process
+	{
+		(Get-Projects $ProjectName) | %{
+			$ProjectName = $_.ProjectName
+			$_.Object.References | Where-Object { $_.Name -eq $ReferenceName } | %{
+				$_.Remove()
+				Write-Host "Removed the reference to $ReferenceName from $ProjectName."
+			}
+
+			$_.Save()
 		}
 	}
 }
@@ -338,4 +376,14 @@ Register-TabExpansion Add-Unity3DReference @{
 	ProjectName = { Get-Project -All | Select -ExpandProperty Name }
 }
 
-Export-ModuleMember Get-Unity3DEditorPath, Update-Unity3DReferences, Add-Unity3DReference, Get-Unity3DProjectProperties
+Register-TabExpansion Remove-Unity3DReference @{
+	ReferenceName = {
+		param($context)
+
+		$project = $context.ProjectName | Get-Projects
+		$project.Object.References | Sort-Object Name | %{ $_.Name } | Select-Object -Unique
+	}
+	ProjectName = { Get-Project -All | Select -ExpandProperty Name }
+}
+
+Export-ModuleMember Get-Unity3DEditorPath, Update-Unity3DReferences, Add-Unity3DReference, Remove-Unity3DReference, Get-Unity3DProjectProperties
