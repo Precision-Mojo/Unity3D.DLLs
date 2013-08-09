@@ -78,7 +78,7 @@ function Update-Unity3DReferences
 				}
 				else
 				{
-					$item.SetMetadataValue("HintPath", $managedDll)
+					$item.SetMetadataValue("HintPath", $managedDll) | Out-Null
 				}
 
 				$modified = $true
