@@ -29,7 +29,8 @@ $DefaultUnity3DProjectProperties = @{
 	or the reference item's HintPath metadata.
 
 .PARAMETER ProjectName
-	The name of the project to update. If omitted, all projects in the solution are updated.
+	The name of the project to update. If omitted, then the default project selected in the Package Manager Console
+	is used.
 #>
 function Update-Unity3DReferences
 {

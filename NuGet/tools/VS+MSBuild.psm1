@@ -24,7 +24,7 @@ function Get-Projects
 	}
 	else
 	{
-		$projects = Get-Project -All
+		$projects = Get-Project
 	}
 
 	$projects
