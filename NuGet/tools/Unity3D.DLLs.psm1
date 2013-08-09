@@ -94,6 +94,90 @@ function Update-Unity3DReferences
 
 <#
 .SYNOPSIS
+	Adds an assembly reference to a Unity3D managed DLL.
+
+.DESCRIPTION
+	Adds the specified Unity 3D assembly to the specified project(s). The name of the assembly is the file name of the
+	assembly without the extension, e.g. UnityEngine. The list of available assemblies is based on the contents of the
+	Unity editor's Managed directory. If an assembly name is passed that doesn't exist in this folder, a warning is
+	output before adding the reference.
+	
+.PARAMETER AssemblyName
+	The name of the Unity 3D assembly. If no name is given, UnityEngine is used.
+	
+.PARAMETER ProjectName
+	The name of the project to add a reference to. If omitted, then the default project selected in the Package Manager
+	Console is used.
+#>
+function Add-Unity3DReference
+{
+	param
+	(
+		[string] $AssemblyName,
+		[Parameter(ValueFromPipelineByPropertyName=$true)]
+		[String[]] $ProjectName
+	)
+
+	begin
+	{
+		$unity3DManagedDlls = GetUnity3DManagedDlls
+
+		if ($unity3DManagedDlls.Length -eq 0)
+		{
+			Write-Warning "Couldn't get a list of Unity 3D managed DLLs."
+			return
+		}
+		
+		if (!$AssemblyName)
+		{
+			$AssemblyName = "UnityEngine"
+		}
+		
+		$managedDll = $unity3DManagedDlls[$AssemblyName.ToUpperInvariant()]
+		
+		if (!$managedDll)
+		{
+			$managedDll = Join-Path (GetUnity3DManagedPath) ($AssemblyName + ".dll")
+			Write-Warning "The assembly named `"$AssemblyName`" was not found in the list of Unity 3D managed DLLs."
+			Write-Warning "A reference to `"$AssemblyName`" will be added using the path `"$managedDll`"."
+		}
+	}
+	
+	process
+	{
+		(Get-Projects $ProjectName) | % {
+			$projectProperties = $_ | Get-Unity3DProjectProperties
+			$ProjectName = $_.ProjectName
+
+			# Is there already a reference?
+			$reference = $_.Object.References | Where-Object { $_.Name -eq $AssemblyName }
+
+			if (!$reference)
+			{
+				if ($projectProperties.Unity3DUseReferencePath)
+				{
+					# If using the reference path, make sure it's up-to-date as adding a reference will attempt to
+					# resolve it.
+					$_ | Join-ReferencePath (Split-Path $managedDll)
+				}
+
+				$reference = $_.Object.References.Add($managedDll)
+				$_.Save()
+				$referenceName = $reference.Name
+				$referencePath = $reference.Path
+				Write-Host "Added a reference to $referenceName ($referencePath) to $ProjectName."
+			}
+			else
+			{
+				$referenceName = $reference.Name
+				Write-Warning "The project `"$ProjectName`" already contains a reference to `"$referenceName`". Skipping."
+			}
+		}
+	}
+}
+
+<#
+.SYNOPSIS
 	Returns the path to the Unity 3D editor application.
 
 .DESCRIPTION
@@ -249,4 +333,9 @@ function GetInstalledSoftware32([parameter(Mandatory=$true)]$displayName)
 	}
 }
 
-Export-ModuleMember Get-Unity3DEditorPath, Update-Unity3DReferences, Get-Unity3DProjectProperties
+Register-TabExpansion Add-Unity3DReference @{
+	AssemblyName = { (GetUnity3DManagedDlls).GetEnumerator() | Sort-Object -Property Name | Select-Object -ExpandProperty Value | Split-Path -Leaf | % {[System.IO.Path]::GetFileNameWithoutExtension($_) } }
+	ProjectName = { Get-Project -All | Select -ExpandProperty Name }
+}
+
+Export-ModuleMember Get-Unity3DEditorPath, Update-Unity3DReferences, Add-Unity3DReference, Get-Unity3DProjectProperties
