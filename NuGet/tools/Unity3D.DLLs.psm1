@@ -60,12 +60,13 @@ function Update-Unity3DReferences
 
 			foreach ($item in $buildProject.GetItems("Reference"))
 			{
-				if ($item.IsImported -or !$unity3DManagedDlls.ContainsKey($item.EvaluatedInclude))
+				$AssemblyName = $item.EvaluatedInclude.ToUpperInvariant()
+				if ($item.IsImported -or !$unity3DManagedDlls.ContainsKey($AssemblyName))
 				{
 					continue
 				}
 
-				$managedDll = $unity3DManagedDlls[$item.EvaluatedInclude]
+				$managedDll = $unity3DManagedDlls[$AssemblyName]
 
 				if ($projectProperties.Unity3DUseReferencePath)
 				{
@@ -200,7 +201,7 @@ function GetUnity3DManagedDlls
 	foreach ($dll in $managedDlls)
 	{
 		$name = $dll | Split-Path -Leaf | % {[System.IO.Path]::GetFileNameWithoutExtension($_) }
-		$unity3dManagedDlls[$name] = $dll
+		$unity3dManagedDlls[$name.ToUpperInvariant()] = $dll
 	}
 
 	$unity3dManagedDlls
