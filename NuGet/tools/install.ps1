@@ -9,5 +9,10 @@ Join-Path $projectPath "8CFAF032-C5F2-49A3-B8F6-07EF68F4623D.txt" | Remove-Item
 # Add the UnityEngine assembly reference to the project.
 $project | Add-Unity3DReference
 
-# Update Unity 3D references.
-$project | Update-Unity3DReferences
+# Update Unity 3D references if the project's Unity3DSkipAutoUpdate property isn't set to true.
+$projectProperties = $project | Get-Unity3DProjectProperties
+
+if (!$projectProperties.Unity3DSkipAutoUpdate)
+{
+	$project | Update-Unity3DReferences
+}
