@@ -148,20 +148,20 @@ function Add-Unity3DReference
 	{
 		(Get-Projects $ProjectName) | % {
 			$projectProperties = $_ | Get-Unity3DProjectProperties
-			$ProjectName = $_.ProjectName
+
+			if ($projectProperties.Unity3DUseReferencePath)
+			{
+				# If using the reference path, make sure it's up-to-date as adding a reference will attempt to
+				# resolve it.
+				$_ | Join-ReferencePath (Split-Path $managedDll)
+			}
 
 			# Is there already a reference?
+			$ProjectName = $_.ProjectName
 			$reference = $_.Object.References | Where-Object { $_.Name -eq $AssemblyName }
 
 			if (!$reference)
 			{
-				if ($projectProperties.Unity3DUseReferencePath)
-				{
-					# If using the reference path, make sure it's up-to-date as adding a reference will attempt to
-					# resolve it.
-					$_ | Join-ReferencePath (Split-Path $managedDll)
-				}
-
 				$reference = $_.Object.References.Add($managedDll)
 				$_.Save()
 				$referenceName = $reference.Name
