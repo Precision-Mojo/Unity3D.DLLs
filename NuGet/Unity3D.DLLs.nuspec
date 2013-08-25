@@ -5,6 +5,7 @@
     <version>1.0.0</version>
     <title>Unity3D DLLs</title>
     <authors>Precision Mojo</authors>
+    <copyright>Copyright (c) 2013 Precision Mojo, LLC and Contributors.</copyright>
     <description>Adds project assembly references to Unity3D managed DLLs installed on the system. Adds Package Manager Console commands to update, add, and remove Unity3D assembly references.</description>
     <summary>Provides a convenient method of sharing Unity3D-based projects where the only requirement is that Unity3D is installed on the system.</summary>
     <language>en-US</language>
@@ -12,5 +13,6 @@
     <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>unity3d</tags>
+    <references/>
   </metadata>
 </package>
