@@ -1,4 +1,4 @@
-# The MIT License
+## The MIT License
 
 Copyright (c) 2013 Precision Mojo, LLC and [Contributors](CONTRIBUTORS.md).
 
