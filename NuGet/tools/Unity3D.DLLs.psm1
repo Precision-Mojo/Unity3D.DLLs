@@ -60,7 +60,8 @@ function Update-Unity3DReferences
 
 			foreach ($item in $buildProject.GetItems("Reference"))
 			{
-				$AssemblyName = $item.EvaluatedInclude.ToUpperInvariant()
+				# Keep only the short assembly name, ignoring anything after a comma.
+				$AssemblyName = ($item.EvaluatedInclude.ToUpperInvariant() -split ",")[0].Trim()
 				if ($item.IsImported -or !$unity3DManagedDlls.ContainsKey($AssemblyName))
 				{
 					continue
