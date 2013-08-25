@@ -39,6 +39,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "content", "content", "{7656
 		NuGet\content\8CFAF032-C5F2-49A3-B8F6-07EF68F4623D.txt = NuGet\content\8CFAF032-C5F2-49A3-B8F6-07EF68F4623D.txt
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{D9082F8A-890A-4D37-92BA-6F0349CBDEFD}"
+	ProjectSection(SolutionItems) = preProject
+		docs\_footer.html = docs\_footer.html
+		docs\_header.html = docs\_header.html
+		docs\index.html = docs\index.html
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{39B6E101-BBE3-4078-BBB4-CCBEC76AD26C}"
+	ProjectSection(SolutionItems) = preProject
+		docs\css\markdown.css = docs\css\markdown.css
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,5 +68,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{3BF2E688-1F1F-43D1-ABC9-D0864EFE9411} = {745866C2-4B3E-44AD-B9FE-C428C1F0E140}
 		{765687B9-ED12-4117-93AC-546D256213BF} = {745866C2-4B3E-44AD-B9FE-C428C1F0E140}
+		{39B6E101-BBE3-4078-BBB4-CCBEC76AD26C} = {D9082F8A-890A-4D37-92BA-6F0349CBDEFD}
 	EndGlobalSection
 EndGlobal
