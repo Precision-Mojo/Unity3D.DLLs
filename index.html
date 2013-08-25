@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Unity3D.DLLs NuGet Package</title>
+    <link rel="stylesheet" href="css/markdown.css"></link>
+  </head>
+  <body>
+    <div id="container">
+<h1 id="unity3ddlls">Unity3D.DLLs</h1>
+<p><a href="https://www.nuget.org/">NuGet</a> package for managing assembly references to installed <a href="http://unity3d.com/">Unity3D</a> DLLs.</p>
+<p>Copyright (c) 2013 <a href="http://www.precisionmojo.com/">Precision Mojo, LLC</a> and <a href="CONTRIBUTORS.md">Contributors</a>.</p>
+<p>The Unity3D.DLLs project is distributed under the <a href="LICENSE.MIT.md">MIT License</a>.</p>
+<h2 id="overview">Overview</h2>
+<p>The Unity3D.DLLs NuGet package provides a convenient way for developers to collaborate on projects that reference Unity3D
+managed assemblies. These projects include Unity3D plugins and editor extensions which usually depend on the UnityEngine and
+UnityEditor assemblies that are installed with Unity3D. Instead of requiring developers to manually add or update
+references to these assemblies, the Unity3D.DLLs package will automatically detect the location of the installed Unity3D
+assemblies, add them to a project, and ensure that they are found when the project is built. By using the NuGet <a href="#package-restore">Package
+Restore</a> feature in combination with the Unity3D.DLLs package, projects that are distributed to other
+developers are guaranteed to build without modification.</p>
+<p>The Unity3D.DLLs package also adds <a href="#powershell-commands">commands</a> to the NuGet Package Manager Console that make it easy
+to add, remove, and update references to Unity3D assemblies.</p>
+<h2 id="installation">Installation</h2>
+<p>Install the Unity3D.DLLs package through the Manage NuGet Packages dialog box or the Package Manager Console.</p>
+<h3 id="manage-nuget-packages">Manage NuGet Packages</h3>
+<ul>
+<li>Open the Solution Explorer and right click the project where Unity3D.DLLs is to be installed.</li>
+<li>Select the "Manage NuGet Packages..." menu item to open the Manage NuGet Packages dialog box.</li>
+<li>Select the Online category on the left, then type <code>Unity3D.DLLs</code> in the "Search Online" text box.</li>
+<li>Locate the Unity3D.DLLs package in the list and click Install.</li>
+</ul>
+<h3 id="package-manager-console">Package Manager Console</h3>
+<p>Open the Package Manager Console, select the desired project from the "Default project:" dropdown, and enter the
+following command at the prompt:</p>
+<pre><code>Install-Package Unity3D.DLLs
+</code></pre>
+<h2 id="package-restore">Package Restore</h2>
+<p>The NuGet Package Restore feature can be used to ensure that the source to a Unity3D plugin or extension project will build
+out-of-the-box when distributed to other developers across an organization or the Internet. The only requirement for a
+developer receiving a project with Package Restore enabled is a valid Unity3D installation.</p>
+<p>To enable Package Restore for your solution follow the instructions given
+<a href="https://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages">here</a>. Note that Automatic Package Restore
+is enabled by default in NuGet 2.7 and later.</p>
+<p><strong><em>IMPORTANT</em></strong>
+If your project is under source control, under no circumstances should you ever check in your <strong>packages</strong> folder! The
+<strong>packages</strong> folder contains package metadata, assemblies, and other files for all installed packages. These files don't
+need to be stored under source control because they are installed during the Package Restore process. For a detailed
+explaination of Package Restore refer to the <a href="http://docs.nuget.org/docs/reference/package-restore">NuGet documentation</a>.</p>
+<h2 id="powershell-commands">PowerShell Commands</h2>
+<p>The Unity3D.DLLs package comes with a PowerShell module that contains several useful commands that can be used within the
+Package Manage Console. Here is a brief synopsis of the available commands, for detailed information, use the <code>Get-Help</code>
+command:</p>
+<pre><code>Get-Help Add-Unity3DReference -Detailed
+</code></pre>
+<h3 id="add-unity3dreference">Add-Unity3DReference</h3>
+<pre><code>Add-Unity3DReference [[-AssemblyName] &lt;String&gt;] [[-ProjectName] &lt;String[]&gt;] [&lt;CommonParameters&gt;]
+</code></pre>
+<p>Adds an assembly reference to a Unity3D managed DLL.</p>
+<h3 id="remove-unity3dreference">Remove-Unity3DReference</h3>
+<pre><code>Remove-Unity3DReference [-ReferenceName] &lt;String&gt; [[-ProjectName] &lt;String[]&gt;] [&lt;CommonParameters&gt;]
+</code></pre>
+<p>Removes a Unity 3D assembly reference from a project.</p>
+<h3 id="update-unity3dreferences">Update-Unity3DReferences</h3>
+<pre><code>Update-Unity3DReferences [[-ProjectName] &lt;String[]&gt;] [&lt;CommonParameters&gt;]
+</code></pre>
+<p>Updates assembly references to Unity 3D managed DLLs.</p>
+<h3 id="get-unity3deditorpath">Get-Unity3DEditorPath</h3>
+<pre><code>Get-Unity3DEditorPath [&lt;CommonParameters&gt;]
+</code></pre>
+<p>Returns the path to the Unity 3D editor application.</p>
+<h3 id="get-unity3dprojectproperties">Get-Unity3DProjectProperties</h3>
+<pre><code>Get-Unity3DProjectProperties [-ProjectName] &lt;String&gt; [&lt;CommonParameters&gt;]
+</code></pre>
+<p>Returns a hashtable with the Unity3D.DLLs properties collected for the specified project.</p>
+<h2 id="todo">Todo</h2>
+<ul>
+<li>Test / get working in MonoDevelop.</li>
+<li>Test / get working in Xamarin Studio.</li>
+<li>Test / get working on OSX.</li>
+</ul>
+<h2 id="about">About</h2>
+<p>The Unity3D.DLLs project was created by <a href="http://www.precisionmojo.com/">Precision Mojo</a> for the benefit of the Unity3D development community. It is
+currently maintained by <a href="https://github.com/igetgames">Marcus R. Brown</a>
+(<a href="https://twitter.com/#!/igetgames">@igetgames</a> on Twitter). Send feedback to unity3d.dlls@precisionmojo.com.</p><h1 id="the-mit-license">The MIT License</h1>
+<p>Copyright (c) 2013 Precision Mojo, LLC and <a href="CONTRIBUTORS.md">Contributors</a>.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</p>    </div>
+  </body>
+</html>
