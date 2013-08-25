@@ -3,8 +3,8 @@ Unity3D.DLLs.psm1 - PowerShell module for using Unity3D.DLLs from the NuGet Pack
 
 Copyright (c) 2013 Precision Mojo, LLC.
 
-This file is part of the Unity3D.DLLs project (< URL >) which is distributed under the MIT License.
-Refer to the LICENSE.MIT.md document located in the project directory for licensing terms.
+This file is part of the Unity3D.DLLs project (http://precisionmojo.github.io/Unity3D.DLLs/) which is distributed
+under the MIT License. Refer to the LICENSE.MIT.md document located in the project directory for licensing terms.
 #>
 
 $Unity3DProjectPropertyNames = @(
