@@ -4,11 +4,13 @@
 
 Copyright (c) 2013 [Precision Mojo, LLC][1] and [Contributors](CONTRIBUTORS.md).
 
-The Unity3D.DLLs project is distributed under the [MIT License](LICENSE.MIT.md).
+The Unity3D.DLLs project is distributed under the [MIT License](LICENSE.MIT.md). The source to the Unity3D.DLLs
+project is available from [GitHub][4].
 
 [1]: http://www.precisionmojo.com/
 [2]: https://www.nuget.org/
 [3]: http://unity3d.com/
+[4]: https://github.com/PrecisionMojo/Unity3D.DLLs
 
 ## Overview
 
@@ -105,4 +107,5 @@ Returns a hashtable with the Unity3D.DLLs properties collected for the specified
 
 The Unity3D.DLLs project was created by [Precision Mojo][1] for the benefit of the Unity3D development community. It is
 currently maintained by [Marcus R. Brown](https://github.com/igetgames)
-([@igetgames](https://twitter.com/#!/igetgames) on Twitter). Send feedback to unity3d.dlls@precisionmojo.com.
+([@igetgames](https://twitter.com/#!/igetgames) on Twitter). Send feedback to
+[unity3d.dlls@precisionmojo.com](mailto:unity3d.dlls@precisionmojo.com).
