@@ -6,5 +6,8 @@ $project.ProjectItems | ForEach { if ($_.Name -eq "8CFAF032-C5F2-49A3-B8F6-07EF6
 $projectPath = Split-Path $project.FullName -Parent
 Join-Path $projectPath "8CFAF032-C5F2-49A3-B8F6-07EF68F4623D.txt" | Remove-Item
 
+# Add the UnityEngine assembly reference to the project.
+$project | Add-Unity3DReference
+
 # Update Unity 3D references.
 $project | Update-Unity3DReferences
