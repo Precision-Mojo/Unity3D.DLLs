@@ -30,6 +30,51 @@ function Get-Projects
 	$projects
 }
 
+function Get-ProjectReferencePath
+{
+	param
+	(
+		[Parameter(ValueFromPipelineByPropertyName=$true)]
+		[String] $ProjectName,
+		[switch] $UseMSBuildProject
+	)
+
+	if ($UseMSBuildProject)
+	{
+		$pathProperty = Get-MSBuildProperty "ReferencePath" $ProjectName
+
+		if ($pathProperty)
+		{
+			return $pathProperty.UnevaluatedValue
+		}
+	}
+	else
+	{
+		(Get-Projects $ProjectName).Properties.Item("ReferencePath").Value
+	}
+}
+
+function Set-ProjectReferencePath
+{
+	param
+	(
+		[Parameter(Position=0, Mandatory=$true)]
+		[string] $ReferencePath,
+		[Parameter(Position=1, ValueFromPipelineByPropertyName=$true)]
+		[String] $ProjectName,
+		[switch] $UseMSBuildProject
+	)
+
+	if ($UseMSBuildProject)
+	{
+		Set-MSBuildProperty "ReferencePath" $ReferencePath $ProjectName -SpecifyUserProject
+	}
+	else
+	{
+		(Get-Projects $ProjectName).Properties.Item("ReferencePath").Value = $ReferencePath
+	}
+}
+
 function Get-MSBuildProject
 {
 	param

@@ -287,13 +287,11 @@ function Join-ReferencePath
 
 	# Ensure a trailing slash.
 	$Path = $Path.TrimEnd("\") + "\"
-	$pathProperty = Get-MSBuildProperty "ReferencePath" $ProjectName
+	$origReferencePath = Get-ProjectReferencePath $ProjectName
 
-	if ($pathProperty)
+	if ($origReferencePath)
 	{
 		# Ensure the added reference path is the first in the list.
-		$origReferencePath = $pathProperty.UnevaluatedValue
-
 		if (!$origReferencePath.StartsWith($Path))
 		{
 			$Path = $Path + ";" + $origReferencePath.Replace($Path, "")
@@ -304,7 +302,7 @@ function Join-ReferencePath
 		}
 	}
 
-	Set-MSBuildProperty "ReferencePath" $Path.TrimEnd(";") $ProjectName -SpecifyUserProject
+	Set-ProjectReferencePath $Path.TrimEnd(";") $ProjectName
 }
 
 # Returns a hashtable with the paths of all Unity 3D managed DLLs that start with "Unity".
