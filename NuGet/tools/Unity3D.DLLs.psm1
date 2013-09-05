@@ -361,7 +361,7 @@ function GetInstalledSoftware32([parameter(Mandatory=$true)]$displayName)
 	    $UninstallKeys = Get-ChildItem HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\
 	}
 
-	$UninstallKeys | Get-ItemProperty | Where-Object -Property DisplayName -EQ $displayName
+	$UninstallKeys | Get-ItemProperty | Where-Object { $_.DisplayName -eq $displayName }
 }
 
 'Update-Unity3DReferences', 'Get-Unity3DProjectProperties' | % {
