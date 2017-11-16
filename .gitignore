@@ -17,6 +17,7 @@ Unity3D.DLLs.*.nupkg
 *.usertasks
 *.cache
 *.Cache
+.vs
 
 # Addin / extension data.
 _ReSharper.*
