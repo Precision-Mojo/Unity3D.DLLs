@@ -364,25 +364,28 @@ function GetInstalledSoftware32([parameter(Mandatory=$true)]$displayName)
 	$UninstallKeys | Get-ItemProperty | Where-Object { $_.DisplayName -eq $displayName }
 }
 
-'Update-Unity3DReferences', 'Get-Unity3DProjectProperties' | % {
-	Register-TabExpansion $_ @{
+if ($Host.Name -eq "Package Manager Host")
+{
+	'Update-Unity3DReferences', 'Get-Unity3DProjectProperties' | % {
+		Register-TabExpansion $_ @{
+			ProjectName = { Get-Project -All | Select -ExpandProperty Name }
+		}
+	}
+
+	Register-TabExpansion Add-Unity3DReference @{
+		AssemblyName = { (GetUnity3DManagedDlls).GetEnumerator() | Sort-Object -Property Name | Select-Object -ExpandProperty Value | Split-Path -Leaf | % {[System.IO.Path]::GetFileNameWithoutExtension($_) } }
 		ProjectName = { Get-Project -All | Select -ExpandProperty Name }
 	}
-}
 
-Register-TabExpansion Add-Unity3DReference @{
-	AssemblyName = { (GetUnity3DManagedDlls).GetEnumerator() | Sort-Object -Property Name | Select-Object -ExpandProperty Value | Split-Path -Leaf | % {[System.IO.Path]::GetFileNameWithoutExtension($_) } }
-	ProjectName = { Get-Project -All | Select -ExpandProperty Name }
-}
+	Register-TabExpansion Remove-Unity3DReference @{
+		ReferenceName = {
+			param($context)
 
-Register-TabExpansion Remove-Unity3DReference @{
-	ReferenceName = {
-		param($context)
-
-		$project = $context.ProjectName | Get-Projects
-		$project.Object.References | Sort-Object Name | %{ $_.Name } | Select-Object -Unique
+			$project = $context.ProjectName | Get-Projects
+			$project.Object.References | Sort-Object Name | %{ $_.Name } | Select-Object -Unique
+		}
+		ProjectName = { Get-Project -All | Select -ExpandProperty Name }
 	}
-	ProjectName = { Get-Project -All | Select -ExpandProperty Name }
 }
 
 Export-ModuleMember Get-Unity3DEditorPath, Update-Unity3DReferences, Add-Unity3DReference, Remove-Unity3DReference, Get-Unity3DProjectProperties
