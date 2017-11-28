@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="All" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <NuGetExePath>$(MSBuildProjectDirectory)\.nuget</NuGetExePath>
-    <NuGetExe>$(NuGetExePath)\NuGet.exe</NuGetExe>
+    <!-- $(SolutionDir) defaults to this directory (the location of the .sln). -->
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(MSBuildProjectDirectory)</SolutionDir>
+
+    <!-- Path to the NuGet.targets MSBuild project. -->
+    <NuGetTargetsPath>$(SolutionDir)\.nuget\NuGet.targets</NuGetTargetsPath>
+
+    <!-- Path to the package source. -->
     <PackageSourcePath>$(MSBuildProjectDirectory)\NuGet</PackageSourcePath>
+
+    <!-- Download NuGet.exe if it doesn't exist. -->
+    <DownloadNuGetExe>true</DownloadNuGetExe>
   </PropertyGroup>
 
-  <Target Name="All"
-          DependsOnTargets="CreatePackage" />
+  <Import Project="$(NuGetTargetsPath)" Condition="Exists('$(NuGetTargetsPath)')" />
 
-  <Target Name="CreatePackage">
-    <Exec Command="&quot;$(NuGetExe)&quot; pack $(PackageSourcePath)\Unity3D.DLLs.nuspec" />
+  <Target Name="All"
+          DependsOnTargets="EnsureNuGetTargets;CreatePackage" />
+
+  <Target Name="EnsureNuGetTargets">
+    <PropertyGroup>
+      <ErrorText>This project requires NuGet.targets, which should be located at {0}.</ErrorText>
+    </PropertyGroup>
+
+    <Error Condition="!Exists('$(NuGetTargetsPath)')" Text="$([System.String]::Format('$(ErrorText)', '$(NuGetTargetsPath)'))" />
+  </Target>
+
+  <Target Name="CreatePackage" DependsOnTargets="CheckPrerequisites">
+    <Exec Command="$(NuGetCommand) pack $(PackageSourcePath)\Unity3D.DLLs.nuspec" />
   </Target>
 </Project>
