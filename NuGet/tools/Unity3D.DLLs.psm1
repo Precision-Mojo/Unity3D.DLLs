@@ -82,6 +82,8 @@ function Update-Unity3DReferences
 					$item.SetMetadataValue("HintPath", $managedDll) | Out-Null
 				}
 
+				$item.SetMetadataValue("Private", "False") | Out-Null
+
 				$modified = $true
 			}
 
@@ -163,6 +165,7 @@ function Add-Unity3DReference
 			if (!$reference)
 			{
 				$reference = $_.Object.References.Add($managedDll)
+				$reference.CopyLocal = $false
 				$_.Save()
 				$referenceName = $reference.Name
 				$referencePath = $reference.Path
