@@ -30,6 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{3BF2E688
 		NuGet\tools\install.ps1 = NuGet\tools\install.ps1
 		NuGet\tools\Unity3D.DLLs.psd1 = NuGet\tools\Unity3D.DLLs.psd1
 		NuGet\tools\Unity3D.DLLs.psm1 = NuGet\tools\Unity3D.DLLs.psm1
+		NuGet\tools\Unity3DExtensions.psm1 = NuGet\tools\Unity3DExtensions.psm1
 		NuGet\tools\VS+MSBuild.psm1 = NuGet\tools\VS+MSBuild.psm1
 	EndProjectSection
 EndProject
