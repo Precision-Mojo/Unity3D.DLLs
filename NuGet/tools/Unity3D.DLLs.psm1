@@ -328,12 +328,59 @@ function GetUnity3DManagedDlls
 		$unity3dManagedDlls[$name.ToUpperInvariant()] = $dll
 	}
 
-	$unity3dManagedDlls
+	$unity3dManagedDlls + (GetUnity3DExtensionDlls)
+}
+
+function GetUnity3DExtensionDlls
+{
+    $unity3DExtensionsPath = GetUnity3DExtensionsPath
+
+    if (!(Test-Path $unity3DExtensionsPath))
+    {
+        Write-Warning "Couldn't locate the installed Unity 3D extension DLLs."
+
+        return @{}
+    }
+
+    $unity3dExtensionDlls = @{}
+
+    Get-ChildItem (Join-Path $unity3DExtensionsPath "*\ivy.xml") | % { Get-IvyModule $_.FullName } | % `
+    {
+        $moduleName = $_.Name
+        $basePath = $_.BasePath
+        $artifacts = $_.Artifacts | Where-Object { $_.Extension.ToUpperInvariant() -eq "DLL" -and ($_.Name | Split-Path -Leaf).StartsWith("Unity") }
+
+        foreach ($artifact in $artifacts)
+        {
+            $dll = Join-Path $basePath $artifact.Filename
+
+            if (!(Test-Path $dll))
+            {
+                Write-Warning "Unity 3D extension specifed in module $moduleName not found: $dll."
+
+                continue
+            }
+
+            $name = ($dll | Split-Path -Leaf | % { [System.IO.Path]::GetFileNameWithoutExtension($_) }).ToUpperInvariant()
+
+            if (!$unity3dExtensionDlls.ContainsKey($name))
+            {
+                $unity3dExtensionDlls[$name] = $dll
+            }
+        }
+    }
+
+    $unity3dExtensionDlls
 }
 
 function GetUnity3DManagedPath
 {
 	Join-Path (Get-Unity3DEditorPath) "Data\Managed"
+}
+
+function GetUnity3DExtensionsPath
+{
+    Join-Path (Get-Unity3DEditorPath) "Data\UnityExtensions\Unity"
 }
 
 # Normalizes property values: converts "true" to $true, "false" or empty strings to $false, and passes everything else.
