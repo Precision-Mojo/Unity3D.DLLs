@@ -7,9 +7,20 @@ This file is part of the Unity3D.DLLs project (http://precisionmojo.github.io/Un
 under the MIT License. Refer to the LICENSE.MIT.md document located in the project directory for licensing terms.
 #>
 
-$ivyParserPath = "C:\Program Files\Unity-2017.2.0\Editor\Data\Managed\Unity.IvyParser.dll"
+$ivyParserPath = $null
 
 $parseFileMethod = $null
+
+function Set-IvyParserPath
+{
+    param
+    (
+        [Parameter(Mandatory=$true)]
+        [String] $Path
+    )
+
+    $script:ivyParserPath = $Path
+}
 
 function Get-IvyModule
 {

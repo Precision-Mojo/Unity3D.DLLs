@@ -342,6 +342,8 @@ function GetUnity3DExtensionDlls
         return @{}
     }
 
+    Set-IvyParserPath (Join-Path (GetUnity3DManagedPath) "Unity.IvyParser.dll")
+
     $unity3dExtensionDlls = @{}
 
     Get-ChildItem (Join-Path $unity3DExtensionsPath "*\ivy.xml") | % { Get-IvyModule $_.FullName } | % `
