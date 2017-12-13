@@ -53,7 +53,7 @@ function Update-Unity3DReferences
 
 	process
 	{
-		(Get-Projects $ProjectName) | % {
+		(Resolve-ProjectName $ProjectName) | % {
 			$projectProperties = $_ | Get-Unity3DProjectProperties
 			$modified = $false
 			$buildProject = $_ | Get-MSBuildProject
@@ -148,7 +148,7 @@ function Add-Unity3DReference
 
 	process
 	{
-		(Get-Projects $ProjectName) | % {
+		(Resolve-ProjectName $ProjectName) | % {
 			$projectProperties = $_ | Get-Unity3DProjectProperties
 
 			if ($projectProperties.Unity3DUseReferencePath)
@@ -206,7 +206,7 @@ function Remove-Unity3DReference
 
 	process
 	{
-		(Get-Projects $ProjectName) | %{
+		(Resolve-ProjectName $ProjectName) | %{
 			$ProjectName = $_.ProjectName
 			$_.Object.References | Where-Object { $_.Name -eq $ReferenceName } | %{
 				$_.Remove()
@@ -433,7 +433,7 @@ if ($Host.Name -eq "Package Manager Host")
 		ReferenceName = {
 			param($context)
 
-			$project = $context.ProjectName | Get-Projects
+			$project = $context.ProjectName | Resolve-ProjectName
 			$project.Object.References | Sort-Object Name | %{ $_.Name } | Select-Object -Unique
 		}
 		ProjectName = { Get-Project -All | Select -ExpandProperty Name }

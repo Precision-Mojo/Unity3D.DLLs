@@ -10,7 +10,7 @@ Several functions are copied from scripts found in David Fowler's NuGetPowerTool
 NuGetPowerTools is licensed under the Apache License 2.0 (https://nuget.codeplex.com/license).
 #>
 
-function Get-Projects
+function Resolve-ProjectName
 {
 	param
 	(
@@ -50,7 +50,7 @@ function Get-ProjectReferencePath
 	}
 	else
 	{
-		(Get-Projects $ProjectName).Properties.Item("ReferencePath").Value
+		(Resolve-ProjectName $ProjectName).Properties.Item("ReferencePath").Value
 	}
 }
 
@@ -71,7 +71,7 @@ function Set-ProjectReferencePath
 	}
 	else
 	{
-		(Get-Projects $ProjectName).Properties.Item("ReferencePath").Value = $ReferencePath
+		(Resolve-ProjectName $ProjectName).Properties.Item("ReferencePath").Value = $ReferencePath
 	}
 }
 
@@ -86,7 +86,7 @@ function Get-MSBuildProject
 
 	process
 	{
-		(Get-Projects $ProjectName) | % {
+		(Resolve-ProjectName $ProjectName) | % {
 			if ($SpecifyUserProject)
 			{
 				$path = $_.FullName + ".user"
@@ -106,13 +106,13 @@ function Get-MSBuildProperty
 	param
 	(
 		[Parameter(Position=0, Mandatory=$true)]
-		$Name,
+		$PropertyName,
 		[Parameter(Position=1, ValueFromPipelineByPropertyName=$true)]
 		[String[]] $ProjectName
 	)
 
 	$buildProject = Get-MSBuildProject $ProjectName
-	$buildProject.GetProperty($Name)
+	$buildProject.GetProperty($PropertyName)
 }
 
 function Set-MSBuildProperty
@@ -130,10 +130,40 @@ function Set-MSBuildProperty
 
 	process
 	{
-		(Get-Projects $ProjectName) | % {
+		(Resolve-ProjectName $ProjectName) | % {
 			$buildProject = $_ | Get-MSBuildProject -SpecifyUserProject:$SpecifyUserProject
 			$buildProject.SetProperty($PropertyName, $PropertyValue) | Out-Null
 			$_.Save()
 		}
 	}
 }
+
+if ($Host.Name -eq "Package Manager Host")
+{
+    'Get-ProjectReferencePath', 'Set-ProjectReferencePath', 'Get-MSBuildProject', 'Set-MSBuildProperty' | %{
+        Register-TabExpansion $_ @{
+            ProjectName = { Get-Project -All | Select -ExpandProperty Name }
+        }
+    }
+
+    Register-TabExpansion 'Get-MSBuildProperty' @{
+        ProjectName = { Get-Project -All | Select -ExpandProperty Name }
+        PropertyName = {
+            param($context)
+
+            if ($context.ProjectName)
+            {
+                $buildProject = Get-MSBuildProject $context.ProjectName
+            }
+
+            if (!$buildProject)
+            {
+                $buildProject = Get-MSBuildProject
+            }
+
+            $buildProject.Xml.Properties | Sort Name | Select -ExpandProperty Name -Unique
+        }
+    }
+}
+
+Export-ModuleMember Resolve-ProjectName, Get-ProjectReferencePath, Set-ProjectReferencePath, Get-MSBuildProject, Get-MSBuildProperty, Set-MSBuildProperty
