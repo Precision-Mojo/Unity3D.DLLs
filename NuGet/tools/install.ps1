@@ -11,12 +11,6 @@ $project.ProjectItems | ForEach { if ($_.Name -eq "8CFAF032-C5F2-49A3-B8F6-07EF6
 $projectPath = Split-Path $project.FullName -Parent
 Join-Path $projectPath "8CFAF032-C5F2-49A3-B8F6-07EF68F4623D.txt" | Remove-Item
 
-# Remove the module if it's loaded
-if (Get-Module | ? { $_.Name -eq "Unity3D.DLLs" })
-{
-	Remove-Module Unity3D.DLLs
-}
-
 Import-Module (Join-Path $toolsPath Unity3D.DLLs.psd1)
 
 # Add the UnityEngine assembly reference to the project.
