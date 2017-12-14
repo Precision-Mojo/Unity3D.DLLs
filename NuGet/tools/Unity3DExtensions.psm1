@@ -51,3 +51,5 @@ function EnsureUnityIvyParserAssembly
         Add-Type -Path $ivyParserPath
     }
 }
+
+Export-ModuleMember Set-IvyParserPath, Get-IvyModule
