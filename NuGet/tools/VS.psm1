@@ -21,7 +21,7 @@ function Resolve-ProjectName
 
 	if ($ProjectName)
 	{
-		$projects = Get-Project $ProjectName
+		$projects = Get-Project (Split-Path -Leaf $ProjectName)
 	}
 	else
 	{
