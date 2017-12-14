@@ -4,7 +4,7 @@
 ModuleToProcess = 'Unity3D.DLLs.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.1'
+ModuleVersion = '1.0.2'
 
 # ID used to uniquely identify this module
 GUID = '983B5EBE-7E41-4AFC-B779-1DAD3C9BC116'
