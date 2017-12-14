@@ -1,79 +1,15 @@
 <#
-VS+MSBuild.psm1 - Visual Studio and MSBuild utilities.
+MSBuild.psm1 - MSBuild utilities.
 
 Copyright (c) 2013 Precision Mojo, LLC.
+Copyright (c) 2017 Marcus R. Brown <me@igetgam.es>
 
 This file is part of the Unity3D.DLLs project (http://precisionmojo.github.io/Unity3D.DLLs/) which is distributed
 under the MIT License. Refer to the LICENSE.MIT.md document located in the project directory for licensing terms.
 
-Several functions are copied from scripts found in David Fowler's NuGetPowerTools package (https://github.com/davidfowl/NuGetPowerTools).
+Some functions are based on code found in David Fowler's NuGetPowerTools package (https://github.com/davidfowl/NuGetPowerTools).
 NuGetPowerTools is licensed under the Apache License 2.0 (https://nuget.codeplex.com/license).
 #>
-
-function Resolve-ProjectName
-{
-	param
-	(
-		[Parameter(ValueFromPipelineByPropertyName=$true)]
-		[String[]] $ProjectName
-	)
-
-	if ($ProjectName)
-	{
-		$projects = Get-Project $ProjectName
-	}
-	else
-	{
-		$projects = Get-Project
-	}
-
-	$projects
-}
-
-function Get-ProjectReferencePath
-{
-	param
-	(
-		[Parameter(ValueFromPipelineByPropertyName=$true)]
-		[String] $ProjectName,
-		[switch] $UseMSBuildProject
-	)
-
-	if ($UseMSBuildProject)
-	{
-		$pathProperty = Get-MSBuildProperty "ReferencePath" $ProjectName
-
-		if ($pathProperty)
-		{
-			return $pathProperty.UnevaluatedValue
-		}
-	}
-	else
-	{
-		(Resolve-ProjectName $ProjectName).Properties.Item("ReferencePath").Value
-	}
-}
-
-function Set-ProjectReferencePath
-{
-	param
-	(
-		[Parameter(Position=0, Mandatory=$true)]
-		[string] $ReferencePath,
-		[Parameter(Position=1, ValueFromPipelineByPropertyName=$true)]
-		[String] $ProjectName,
-		[switch] $UseMSBuildProject
-	)
-
-	if ($UseMSBuildProject)
-	{
-		Set-MSBuildProperty "ReferencePath" $ReferencePath $ProjectName -SpecifyUserProject
-	}
-	else
-	{
-		(Resolve-ProjectName $ProjectName).Properties.Item("ReferencePath").Value = $ReferencePath
-	}
-}
 
 function Get-MSBuildProject
 {
@@ -140,7 +76,7 @@ function Set-MSBuildProperty
 
 if ($Host.Name -eq "Package Manager Host")
 {
-    'Get-ProjectReferencePath', 'Set-ProjectReferencePath', 'Get-MSBuildProject', 'Set-MSBuildProperty' | %{
+    'Get-MSBuildProject', 'Set-MSBuildProperty' | %{
         Register-TabExpansion $_ @{
             ProjectName = { Get-Project -All | Select -ExpandProperty Name }
         }
@@ -166,4 +102,4 @@ if ($Host.Name -eq "Package Manager Host")
     }
 }
 
-Export-ModuleMember Resolve-ProjectName, Get-ProjectReferencePath, Set-ProjectReferencePath, Get-MSBuildProject, Get-MSBuildProperty, Set-MSBuildProperty
+Export-ModuleMember Get-MSBuildProject, Get-MSBuildProperty, Set-MSBuildProperty

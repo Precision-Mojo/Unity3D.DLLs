@@ -55,7 +55,7 @@ DotNetFrameworkVersion = '4.0'
 # FormatsToProcess = @()
 
 # Modules to import as nested modules of the module specified in ModuleToProcess
-NestedModules = @('VS+MSBuild.psm1', 'Unity3DExtensions.psm1')
+NestedModules = @('VS.psm1', 'MSBuild.psm1', 'VSProject.psm1', 'Unity3DExtensions.psm1', 'Unity3DProject.psm1')
 
 # Functions to export from this module
 FunctionsToExport = '*'
